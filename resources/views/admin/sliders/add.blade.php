@@ -56,7 +56,7 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="">Status *</label>
-                            <div class="form-control @error('description') is-invalid @enderror">
+                            <div class="form-control @error('status') is-invalid @enderror">
                                 <label class="form-check-label" for=" inlineRadio1">Un Publish</label>
                                 <input class="" type="radio" name="status" value="0">
                                 &nbsp;&nbsp;

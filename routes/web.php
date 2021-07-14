@@ -7,6 +7,9 @@ use App\Http\Controllers\MenuController;
 use App\Http\Controllers\SliderController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\SettingController;
+use App\Http\Controllers\PostCategoryController;
+use App\Http\Controllers\PostController;
+use App\Http\Controllers\ProductController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -26,6 +29,9 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
     Route::resource('menu', MenuController::class);
     Route::resource('slider', SliderController::class);
     Route::resource('setting', SettingController::class);
+    Route::resource('post-category', PostCategoryController::class);
+    Route::resource('post', PostController::class);
+    Route::resource('product', ProductController::class);
 });
 
 // login quản trị
