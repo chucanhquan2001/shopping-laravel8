@@ -1,0 +1,79 @@
+@extends('admin/layout_master/layout_master')
+@section('title', 'User List')
+@section('main')
+    <div class="row">
+        <div class="col-md-6">
+            <form class="form-inline" action="" role="form">
+                <div class="form-group">
+                    <input type="text" name="key" id="" class="form-control" placeholder="Search by name"
+                        style="width: 300px">
+                </div>&nbsp;
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-search"></i>
+                </button>
+            </form>
+        </div>
+        <div class="col-md-3">
+            @if (isset($_GET['key']))
+                <a href="{{ route('user.index') }}" class="btn btn-primary">All user</a>
+            @endif
+        </div>
+        @can('user-add')
+            <div class="col-md-3 text-right">
+                <a href="{{ route('user.create') }}" class="btn btn-success">Add</a>
+            </div>
+        @endcan
+    </div>
+    <hr>
+    <div class="row">
+        <div class="col-md-12">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th>ID</th>
+                        <th scope="col">Name</th>
+                        <th>Email</th>
+                        <th>Active</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($data as $key => $value)
+                        <tr>
+                            <th scope="row">{{ $key + 1 }}</th>
+                            <td>{{ $value->id }}</td>
+                            <td>{{ $value->name }}</td>
+                            <td>{{ $value->email }}</td>
+                            @if ($value['active'] == config('common.active.active'))
+                                <td>
+                                    <div class="badge badge-success">{{ 'Active' }}</div>
+                                </td>
+                            @elseif($value['active'] == config('common.active.lock'))
+                                <td>
+                                    <div class="badge badge-danger">{{ 'Locked' }}</div>
+                                </td>
+                            @endif
+                            <td>
+                                @can('user-edit')
+                                    <a href="{{ route('user.edit', $value->id) }}" class="badge badge-primary"><i
+                                            class="far fa-edit"></i></a>
+                                @endcan
+                                @can('user-delete')
+                                    <a href="" data-url="{{ route('user.destroy', $value->id) }}"
+                                        data-token="{{ csrf_token() }}" class="badge badge-danger btn-delete"><i
+                                            class="far fa-trash-alt"></i></a>
+                                @endcan
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+            {{ $data->appends(request()->all())->links() }}
+        </div>
+    </div>
+@stop
+@section('delete')
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="{{ asset('admin_assets/js/delete_ajax.js') }}"></script>
+@stop

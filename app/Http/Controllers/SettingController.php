@@ -14,6 +14,15 @@ class SettingController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+
+
+    public function __construct()
+    {
+        $this->middleware('can:setting-list', ['only' => ['index']]);
+        $this->middleware('can:setting-add', ['only' => ['create', 'store']]);
+        $this->middleware('can:setting-edit', ['only' => ['edit', 'update']]);
+        $this->middleware('can:setting-delete', ['only' => ['destroy']]);
+    }
     public function index()
     {
         $data = Setting::orderBy('id', 'DESC')->search()->paginate(10);
@@ -105,9 +114,15 @@ class SettingController extends Controller
     {
         if (Setting::find($id)) {
             Setting::find($id)->delete();
-            return redirect()->back()->with('success', 'Deleted !');
+            return response()->json([
+                'success' => 'Record deleted successfully!',
+                'code' => 200
+            ]);
         } else {
-            return redirect()->route('setting.index')->with('error', 'Thông tin không tồn tại !');
+            return response()->json([
+                'error' => 'Xóa không thành công !',
+                'code' => 500
+            ]);
         }
     }
 }

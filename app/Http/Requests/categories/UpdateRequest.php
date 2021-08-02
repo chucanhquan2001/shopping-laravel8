@@ -25,8 +25,10 @@ class UpdateRequest extends FormRequest
     {
         return [
             'name' => 'required|max:255|min:1|unique:categories,name,' . request()->id,
-            'slug' => 'required|regex:/^[a-z0-9]+(?:-[a-z0-9]+)*$/',
-            'parent_id' => 'required|integer|min:0|not_in:' . request()->id
+            'slug' => 'required|regex:/^[a-z0-9]+(?:-[a-z0-9]+)*$/|unique:categories,slug,' . request()->id,
+            'parent_id' => 'required|integer|min:0|not_in:1,' . request()->id,
+            'image' => 'max:255',
+            'status' => 'required|integer',
         ];
     }
 
@@ -39,10 +41,14 @@ class UpdateRequest extends FormRequest
             'name.min' => 'Tên danh mục không được dưới 1 kí tự !',
             'slug.required' => 'Slug không được để trống !',
             'slug.regex' => 'Slug không hợp lệ !',
+            'slug.unique' => 'Slug đã có trong database !',
             'parent_id.required' => 'Danh mục cha không được để trống !',
             'parent_id.integer' => 'Danh mục cha phải là số nguyên !',
             'parent_id.min' => 'Danh mục cha không hợp lệ !',
-            'parent_id.not_in' => 'Danh mục cha không hợp lệ !'
+            'parent_id.not_in' => 'Danh mục cha không hợp lệ !',
+            'image.max' => 'Đường dẫn ảnh không được vượt quá 255 kí tự!',
+            'status.required' => 'Trạng thái hiện thị không được để trống!',
+            'status.integer' => 'Trạng thái hiện thị không hợp lệ !',
         ];
     }
 }

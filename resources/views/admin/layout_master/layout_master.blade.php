@@ -31,6 +31,7 @@
     <!--end::Layout Themes-->
     <link rel="shortcut icon"
         href="https://scontent.fhph1-2.fna.fbcdn.net/v/t1.6435-9/149045168_1069677103541676_8754936968744873259_n.jpg?_nc_cat=109&ccb=1-3&_nc_sid=09cbfe&_nc_ohc=_ciAZBxTo48AX8lVfP-&tn=oeXcq8TTPiG6oc_8&_nc_ht=scontent.fhph1-2.fna&oh=5c72b98ac612171a0a0d8b641fd13e6a&oe=60DD2DC5" />
+    @yield('css')
 </head>
 
 <body id="kt_body"
@@ -87,8 +88,8 @@
                 <!--begin::Brand-->
                 <div class="brand flex-column-auto" id="kt_brand">
                     <!--begin::Logo-->
-                    <a href="index.html" class="brand-logo">
-                        <img alt="Logo" src="{{ asset('admin_assets/media/logos/logo-light.png') }}" />
+                    <a href="{{ route('home') }}" class="brand-logo">
+                        <img alt="Logo" src="{{ getConfigValueSetting('logo_footer') }}" style="width:130px" />
                     </a>
                     <!--end::Logo-->
                     <!--begin::Toggle-->
@@ -239,6 +240,7 @@
                                         </div>
                                     </li>
                                 </ul>
+
                                 <!--end::Header Nav-->
                             </div>
                             <!--end::Header Menu-->
@@ -434,14 +436,14 @@
             <div class="d-flex align-items-center mt-5">
                 <div class="symbol symbol-100 mr-5">
                     <div class="symbol-label"
-                        style="background-image:url('{{ asset('admin_assets/media/users/300_21.jpg') }}')">
+                        style="background-image:url('{{ asset('admin_assets/media/users/avatar2.jpg') }}')">
                     </div>
                     <i class="symbol-badge bg-success"></i>
                 </div>
                 <div class="d-flex flex-column">
                     <a href="#"
                         class="font-weight-bold font-size-h5 text-dark-75 text-hover-primary">{{ Auth::user()->name }}</a>
-                    <div class="text-muted mt-1">Application Developer</div>
+                    <div class="text-muted mt-1">{{ Auth::user()->getRoles()->first()->name }}</div>
                     <div class="navi mt-2">
                         <a href="#" class="navi-item">
                             <span class="navi-link p-0 pb-2">

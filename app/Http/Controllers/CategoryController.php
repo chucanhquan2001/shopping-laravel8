@@ -16,9 +16,18 @@ class CategoryController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    public function __construct()
+    {
+        $this->middleware('can:category-list', ['only' => ['index']]);
+        $this->middleware('can:category-add', ['only' => ['create', 'store']]);
+        $this->middleware('can:category-edit', ['only' => ['edit', 'update']]);
+        $this->middleware('can:category-delete', ['only' => ['destroy']]);
+    }
+
+
     public function index()
     {
-        $data = Category::orderBy('id', 'DESC')->search()->paginate(10);
+        $data = Category::latest()->search()->paginate(10);
         return view('admin.categories.index', compact('data'));
     }
 
@@ -89,10 +98,18 @@ class CategoryController extends Controller
         if (!$cate) {
             return redirect()->route('category.index')->with('error', 'Thông tin không tồn tại !');
         } else {
-            if ($cate->update($request->only('name', 'slug', 'parent_id'))) {
-                return redirect()->route('category.index')->with('success', 'Updated !');
+            if (!empty($request->image)) {
+                if ($cate->update($request->only('name', 'slug', 'parent_id', 'image', 'status'))) {
+                    return redirect()->route('category.index')->with('success', 'Updated !');
+                } else {
+                    return redirect()->route('category.index')->with('error', 'Update Failed !');
+                }
             } else {
-                return redirect()->route('category.index')->with('error', 'Update Failed !');
+                if ($cate->update($request->only('name', 'slug', 'parent_id', 'status'))) {
+                    return redirect()->route('category.index')->with('success', 'Updated !');
+                } else {
+                    return redirect()->route('category.index')->with('error', 'Update Failed !');
+                }
             }
         }
     }
@@ -111,9 +128,19 @@ class CategoryController extends Controller
         if (!$cate) {
             return redirect()->route('category.index')->with('error', 'Thông tin không tồn tại !');
         } else {
-            $deleteRecursive = new DeleteCate($cates, $cate);
-            $deleteRecursive->deleteCategoryRecursive($id);
-            return redirect()->back()->with('success', 'Deleted !');
+            if ($id != 1) {
+                $deleteRecursive = new DeleteCate($cates, $cate);
+                $deleteRecursive->deleteCategoryRecursive($id);
+                return response()->json([
+                    'success' => 'Record deleted successfully!',
+                    'code' => 200
+                ]);
+            } else {
+                return response()->json([
+                    'error' => 'Xóa không thành công !',
+                    'code' => 500
+                ]);
+            }
         }
     }
 }
