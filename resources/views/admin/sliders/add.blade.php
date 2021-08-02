@@ -16,7 +16,7 @@
                             @endif
                         </div>
                         <div class="form-group">
-                            <label for="">Slider Title</label> *</label>
+                            <label for="">Slider Title *</label>
                             <input type="text" name="title" class="form-control @error('title') is-invalid @enderror"
                                 value="{{ old('title') }}">
                             @if ($errors->has('title'))
@@ -57,11 +57,13 @@
                         <div class="form-group">
                             <label for="">Status *</label>
                             <div class="form-control @error('status') is-invalid @enderror">
-                                <label class="form-check-label" for=" inlineRadio1">Un Publish</label>
-                                <input class="" type="radio" name="status" value="0">
+                                <label class="form-check-label" for=" inlineRadio1">Banner</label>
+                                <input class="" type="radio" name="status"
+                                    value="{{ config('common.status_sliders.banner') }}">
                                 &nbsp;&nbsp;
-                                <label class="form-check-label" for="inlineRadio1">Publish</label>
-                                <input type="radio" name="status" value="1">
+                                <label class="form-check-label" for="inlineRadio1">Banner children</label>
+                                <input type="radio" name="status"
+                                    value="{{ config('common.status_sliders.banner_children') }}">
                             </div>
                             @if ($errors->has('status'))
                                 <p style="color:red">{{ $errors->first('status') }}</p>

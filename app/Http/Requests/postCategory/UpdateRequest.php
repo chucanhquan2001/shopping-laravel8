@@ -35,7 +35,7 @@ class UpdateRequest extends FormRequest
         return [
             'name.required' => 'Post category name không được để trống !',
             'name.unique' => 'Post category name đã có trong cơ sở dữ liệu !',
-            'config_keyname.max' => 'Post category name không được vượt quá 255 kí tự',
+            'name.max' => 'Post category name không được vượt quá 255 kí tự',
             'slug.required' => 'Slug không được để trống !',
             'slug.regex' => 'Slug không hợp lệ !',
             'slug.max' => 'Slug không được vượt quá 255 kí tự',

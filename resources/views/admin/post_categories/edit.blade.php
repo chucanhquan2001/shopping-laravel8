@@ -26,10 +26,10 @@
                     <label for="">Status *</label>
                     <div class="form-control @error('status') is-invalid @enderror">
                         <label class="form-check-label" for=" inlineRadio1">Un Publish</label>
-                        <input class="" type="radio" name="status" value="0" @if ($data->status == 0) {{ 'checked' }} @endif>
+                        <input class="" type="radio" name="status" value="{{ config('common.status.unpulish') }}" @if ($data->status == config('common.status.unpulish')) {{ 'checked' }} @endif>
                         &nbsp;&nbsp;
                         <label class="form-check-label" for="inlineRadio1">Publish</label>
-                        <input type="radio" name="status" value="1" @if ($data->status == 1) {{ 'checked' }} @endif>
+                        <input type="radio" name="status" value="{{ config('common.status.pulish') }}" @if ($data->status == config('common.status.pulish')) {{ 'checked' }} @endif>
                     </div>
                     @if ($errors->has('status'))
                         <p style="color:red">{{ $errors->first('status') }}</p>

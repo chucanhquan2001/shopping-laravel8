@@ -17,6 +17,13 @@ class SliderController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    public function __construct()
+    {
+        $this->middleware('can:slider-list', ['only' => ['index']]);
+        $this->middleware('can:slider-add', ['only' => ['create', 'store']]);
+        $this->middleware('can:slider-edit', ['only' => ['edit', 'update']]);
+        $this->middleware('can:slider-delete', ['only' => ['destroy']]);
+    }
     public function index()
     {
         $data = Slider::orderBy('id', 'DESC')->search()->paginate(10);
@@ -132,9 +139,15 @@ class SliderController extends Controller
     {
         if (Slider::find($id)) {
             Slider::find($id)->delete();
-            return redirect()->back()->with('success', 'Deleted !');
+            return response()->json([
+                'success' => 'Record deleted successfully!',
+                'code' => 200
+            ]);
         } else {
-            return redirect()->route('slider.index')->with('error', 'Thông tin không tồn tại !');
+            return response()->json([
+                'error' => 'Xóa không thành công !',
+                'code' => 500
+            ]);
         }
     }
 }

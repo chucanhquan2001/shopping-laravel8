@@ -25,10 +25,10 @@
                     <label for="">Status *</label>
                     <div class="form-control @error('status') is-invalid @enderror">
                         <label class="form-check-label" for=" inlineRadio1">Un Publish</label>
-                        <input class="" type="radio" name="status" value="0">
+                        <input class="" type="radio" name="status" value="{{ config('common.status.unpulish') }}">
                         &nbsp;&nbsp;
                         <label class="form-check-label" for="inlineRadio1">Publish</label>
-                        <input type="radio" name="status" value="1">
+                        <input type="radio" name="status" value="{{ config('common.status.pulish') }}">
                     </div>
                     @if ($errors->has('status'))
                         <p style="color:red">{{ $errors->first('status') }}</p>

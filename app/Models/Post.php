@@ -4,11 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Post extends Model
 {
     protected $fillable = ['title', 'slug', 'meta_description', 'content', 'image', 'status', 'view', 'post_category_id'];
-    use HasFactory;
+    use HasFactory, SoftDeletes;
     public function scopeSearch($query)
     {
         if ($key = request()->key) {

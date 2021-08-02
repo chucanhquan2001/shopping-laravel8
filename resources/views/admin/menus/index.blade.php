@@ -18,10 +18,11 @@
                 <a href="{{ route('menu.index') }}" class="btn btn-primary">All Menu</a>
             @endif
         </div>
-
-        <div class="col-md-3 text-right">
-            <a href="{{ route('menu.create') }}" class="btn btn-success">Add</a>
-        </div>
+        @can('menu-add')
+            <div class="col-md-3 text-right">
+                <a href="{{ route('menu.create') }}" class="btn btn-success">Add</a>
+            </div>
+        @endcan
     </div>
     <hr>
     <div class="row">
@@ -44,10 +45,14 @@
                             <td>{{ $value->name }}</td>
                             <td>{{ $value->slug }}</td>
                             <td>
-                                <a href="{{ route('menu.edit', $value->id) }}" class="badge badge-primary"><i
-                                        class="far fa-edit"></i></a>
-                                <a href="{{ route('menu.destroy', $value->id) }}" class="badge badge-danger btn-delete"><i
-                                        class="far fa-trash-alt"></i></a>
+                                @can('menu-edit')
+                                    <a href="{{ route('menu.edit', $value->id) }}" class="badge badge-primary"><i
+                                            class="far fa-edit"></i></a>
+                                @endcan
+                                @can('menu-delete')
+                                    <a href="{{ route('menu.destroy', $value->id) }}" class="badge badge-danger btn-delete"><i
+                                            class="far fa-trash-alt"></i></a>
+                                @endcan
                             </td>
                         </tr>
                     @endforeach

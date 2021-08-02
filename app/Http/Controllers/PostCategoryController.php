@@ -15,6 +15,14 @@ class PostCategoryController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+
+    public function __construct()
+    {
+        $this->middleware('can:post-category-list', ['only' => ['index']]);
+        $this->middleware('can:post-category-add', ['only' => ['create', 'store']]);
+        $this->middleware('can:post-category-edit', ['only' => ['edit', 'update']]);
+        $this->middleware('can:post-category-delete', ['only' => ['destroy']]);
+    }
     public function index()
     {
         $data = PostCategory::orderBy('id', 'DESC')->search()->paginate(10);
@@ -108,9 +116,15 @@ class PostCategoryController extends Controller
                     }
                 }
                 $data->delete();
-                return redirect()->back()->with('success', 'Deleted !');
+                return response()->json([
+                    'success' => 'Record deleted successfully!',
+                    'code' => 200
+                ]);
             } else {
-                return redirect()->route('post-category.index')->with('error', 'Không được xóa danh mục này !');
+                return response()->json([
+                    'error' => 'Xóa không thành công !',
+                    'code' => 500
+                ]);
             }
         } else {
             return redirect()->route('post-category.index')->with('error', 'Thông tin không tồn tại !');

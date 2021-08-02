@@ -5,10 +5,11 @@
         <div class="col-md-6">
             <form action="{{ route('setting.store') }}" method="post" role="form">
                 @csrf
-                <input type="text" name="type" value="{{ request()->type == 'text' ? 'text' : 'textarea' }}" hidden>
+                <input type="text" name="type" value="{{ request()->type }}" hidden>
                 <div class="form-group">
                     <label for="">Config Key *</label>
-                    <input type="text" name="config_key" class="form-control @error('config_key') is-invalid @enderror"
+                    <input type="text" name="config_key" class="form-control
+                                                    @error('config_key') is-invalid @enderror"
                         value="{{ old('config_key') }}">
                     @if ($errors->has('config_key'))
                         <p style="color:red">{{ $errors->first('config_key') }}</p>
@@ -23,6 +24,26 @@
                         @if ($errors->has('config_value'))
                             <p style="color:red">{{ $errors->first('config_value') }}</p>
                         @endif
+                    </div>
+                @elseif(request()->type === 'image')
+                    <div class="form-group">
+                        <label for="">Image *</label>
+                        <div class="input-group">
+                            <span class="input-group-btn">
+                                <a id="image_file_manager" data-input="thumbnail" data-preview="holder"
+                                    class="btn btn-primary">
+                                    <i class="fa fa-picture-o"></i> Choose
+                                </a>
+                            </span>
+                            &nbsp;&nbsp;&nbsp;
+                            <input name="config_value" onchange="readURL();" id="thumbnail" class="form-control"
+                                type="hidden">
+                            @if ($errors->has('config_value'))
+                                <p style="color:red" id="disable-request">{{ $errors->first('config_value') }}</p>
+                            @endif
+                            <img src="" id="blah" alt=""
+                                style="max-height: 100px; max-width: 200px; border-radius: 5px; border: 2px solid #fff; box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;display: none;">
+                        </div>
                     </div>
                 @else
                     <div class="form-group">
@@ -44,3 +65,18 @@
         </div>
     </div>
 @stop
+@section('js')
+    <script src="/vendor/laravel-filemanager/js/stand-alone-button.js"></script>
+    <script>
+        $('#image_file_manager').filemanager('image');
+    </script>
+    <script>
+        function readURL() {
+            var _link = $('input#thumbnail').val();
+            var _img = "{{ env('APP_URL') }}" + _link;
+            $('#blah').attr('src', _img);
+            $('#blah').css("display", "block");
+            $('#disable-request').css("display", "none");
+        }
+    </script>
+@endsection

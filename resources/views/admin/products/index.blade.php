@@ -18,10 +18,11 @@
                 <a href="{{ route('product.index') }}" class="btn btn-primary">All product</a>
             @endif
         </div>
-
-        <div class="col-md-3 text-right">
-            <a href="{{ route('product.create') }}" class="btn btn-success">Add</a>
-        </div>
+        @can('product-add')
+            <div class="col-md-3 text-right">
+                <a href="{{ route('product.create') }}" class="btn btn-success">Add</a>
+            </div>
+        @endcan
     </div>
     <hr>
     <div class="row">
@@ -30,59 +31,53 @@
                 <thead>
                     <tr>
                         <th scope="col">#</th>
-                        <th scope="col">Slider Name</th>
-                        <th scope="col" style="max-width: 200px;">Slider Title</th>
+                        <th scope="col">Product Name</th>
                         <th>Image</th>
                         <th>Status</th>
-                        <th>Action</th>
+                        <th>Category</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {{-- @foreach ($data as $key => $value)
+                    @foreach ($data as $key => $value)
                         <tr>
                             <th scope="row">{{ $key + 1 }}</th>
                             <td>{{ $value->name }}</td>
-                            <td style="max-width: 200px;">{{ $value->title }}</td>
-                            <td><img src="{{ $value->image_path }}"
-                                    style="width:200px; max-height: 150px ; border-radius: 5px; border: 2px solid #fff; box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;"
+                            <td><img src="{{ $value->getProductVariant()->where('status', 0)->first()->image }}"
+                                    style="width:50px; max-height: 100px ; border-radius: 5px; border: 2px solid #fff; box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;"
                                     alt=""></td>
-                            @if ($value['status'] == 1)
+                            @if ($value['status'] == config('common.status.pulish'))
                                 <td>
                                     <div class="badge badge-success">{{ 'Publish' }}</div>
                                 </td>
-                            @elseif($value['status'] == 0)
+                            @elseif($value['status'] == config('common.status.unpulish'))
                                 <td>
                                     <div class="badge badge-danger">{{ 'Un Publish' }}</div>
                                 </td>
                             @endif
                             <td>
-                                <a href="{{ route('product.edit', $value->id) }}" class="badge badge-primary"><i
-                                        class="far fa-edit"></i></a>
-                                <a href="{{ route('product.destroy', $value->id) }}"
-                                    class="badge badge-danger btn-delete"><i class="far fa-trash-alt"></i></a>
+                                {{ optional($value->getCate)->name }}
+                            </td>
+                            <td>
+                                @can('product-edit')
+                                    <a href="{{ route('product.edit', $value->id) }}">Edit</a>
+                                @endcan
+                                @can('product-delete') |
+                                    <a href="" data-url=" {{ route('product.destroy', $value->id) }}"
+                                        data-token="{{ csrf_token() }}" class="btn-delete">Delete</a>
+                                    <br>
+                                @endcan
+                                <a href="{{ route('product-variant.index', $value->id) }}">Variants</a>
                             </td>
                         </tr>
-                    @endforeach --}}
+                    @endforeach
                 </tbody>
             </table>
-            {{-- <form action="" method="post" id="delete-form">
-                @csrf @method('DELETE')
-            </form>
-            {{ $data->appends(request()->all())->links() }} --}}
+            {{ $data->appends(request()->all())->links() }}
         </div>
     </div>
 @stop
-{{-- @section('delete')
-    <script>
-        $('.btn-delete').click(function(e) {
-            e.preventDefault();
-            var _href = $(this).attr('href');
-            $('#delete-form').attr('action', _href);
-            if (confirm(
-                    'Bạn có chắc chắn muốn xóa !'
-                )) {
-                $('#delete-form').submit();
-            }
-        });
-    </script>
-@stop --}}
+@section('delete')
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="{{ asset('admin_assets/js/delete_ajax.js') }}"></script>
+@stop

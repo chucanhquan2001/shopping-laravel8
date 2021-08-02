@@ -10,11 +10,13 @@ use App\Http\Requests\Posts\UpdateRequest;
 
 class PostController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    public function __construct()
+    {
+        $this->middleware('can:post-list', ['only' => ['index']]);
+        $this->middleware('can:post-add', ['only' => ['create', 'store']]);
+        $this->middleware('can:post-edit', ['only' => ['edit', 'update']]);
+        $this->middleware('can:post-delete', ['only' => ['destroy']]);
+    }
     public function index()
     {
         $data = Post::orderBy('id', 'DESC')->search()->paginate(10);
@@ -111,9 +113,15 @@ class PostController extends Controller
     {
         if (Post::find($id)) {
             Post::find($id)->delete();
-            return redirect()->back()->with('success', 'Deleted !');
+            return response()->json([
+                'success' => 'Record deleted successfully!',
+                'code' => 200
+            ]);
         } else {
-            return redirect()->route('post.index')->with('error', 'Thông tin không tồn tại !');
+            return response()->json([
+                'error' => 'Xóa không thành công !',
+                'code' => 500
+            ]);
         }
     }
 }

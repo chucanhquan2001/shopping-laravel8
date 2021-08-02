@@ -18,10 +18,11 @@
                 <a href="{{ route('slider.index') }}" class="btn btn-primary">All Slider</a>
             @endif
         </div>
-
-        <div class="col-md-3 text-right">
-            <a href="{{ route('slider.create') }}" class="btn btn-success">Add</a>
-        </div>
+        @can('slider-add')
+            <div class="col-md-3 text-right">
+                <a href="{{ route('slider.create') }}" class="btn btn-success">Add</a>
+            </div>
+        @endcan
     </div>
     <hr>
     <div class="row">
@@ -46,43 +47,35 @@
                             <td><img src="{{ $value->image_path }}"
                                     style="width:200px; max-height: 150px ; border-radius: 5px; border: 2px solid #fff; box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;"
                                     alt=""></td>
-                            @if ($value['status'] == 1)
+                            @if ($value['status'] == config('common.status_sliders.banner'))
                                 <td>
-                                    <div class="badge badge-success">{{ 'Publish' }}</div>
+                                    <div class="badge badge-success">{{ 'Banner' }}</div>
                                 </td>
-                            @elseif($value['status'] == 0)
+                            @elseif($value['status'] == config('common.status_sliders.banner_children'))
                                 <td>
-                                    <div class="badge badge-danger">{{ 'Un Publish' }}</div>
+                                    <div class="badge badge-danger">{{ 'Banner children' }}</div>
                                 </td>
                             @endif
                             <td>
-                                <a href="{{ route('slider.edit', $value->id) }}" class="badge badge-primary"><i
-                                        class="far fa-edit"></i></a>
-                                <a href="{{ route('slider.destroy', $value->id) }}"
-                                    class="badge badge-danger btn-delete"><i class="far fa-trash-alt"></i></a>
+                                @can('slider-edit')
+                                    <a href="{{ route('slider.edit', $value->id) }}" class="badge badge-primary"><i
+                                            class="far fa-edit"></i></a>
+                                @endcan
+                                @can('slider-delete')
+                                    <a href="" data-url="{{ route('slider.destroy', $value->id) }}"
+                                        data-token="{{ csrf_token() }}" class="badge badge-danger btn-delete"><i
+                                            class="far fa-trash-alt"></i></a>
+                                @endcan
                             </td>
                         </tr>
                     @endforeach
                 </tbody>
             </table>
-            <form action="" method="post" id="delete-form">
-                @csrf @method('DELETE')
-            </form>
             {{ $data->appends(request()->all())->links() }}
         </div>
     </div>
 @stop
 @section('delete')
-    <script>
-        $('.btn-delete').click(function(e) {
-            e.preventDefault();
-            var _href = $(this).attr('href');
-            $('#delete-form').attr('action', _href);
-            if (confirm(
-                    'Bạn có chắc chắn muốn xóa !'
-                )) {
-                $('#delete-form').submit();
-            }
-        });
-    </script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="{{ asset('admin_assets/js/delete_ajax.js') }}"></script>
 @stop

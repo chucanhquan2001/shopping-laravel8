@@ -58,11 +58,13 @@
                         <div class="form-group">
                             <label for="">Status *</label>
                             <div class="form-control @error('description') is-invalid @enderror">
-                                <label class="form-check-label" for=" inlineRadio1">Un Publish</label>
-                                <input class="" type="radio" name="status" value="0" @if ($data->status == 0) {{ 'checked' }} @endif>
+                                <label class="form-check-label" for=" inlineRadio1">Banner</label>
+                                <input class="" type="radio" name="status"
+                                    value="{{ config('common.status_sliders.banner') }}" @if ($data->status == config('common.status_sliders.banner')) {{ 'checked' }} @endif>
                                 &nbsp;&nbsp;
-                                <label class="form-check-label" for="inlineRadio1">Publish</label>
-                                <input type="radio" name="status" value="1" @if ($data->status == 1) {{ 'checked' }} @endif>
+                                <label class="form-check-label" for="inlineRadio1">Banner children</label>
+                                <input type="radio" name="status"
+                                    value="{{ config('common.status_sliders.banner_children') }}" @if ($data->status == config('common.status_sliders.banner_children')) {{ 'checked' }} @endif>
                             </div>
                             @if ($errors->has('status'))
                                 <p style="color:red">{{ $errors->first('status') }}</p>
