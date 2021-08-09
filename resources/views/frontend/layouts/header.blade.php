@@ -15,16 +15,19 @@
                 <ul class="list-none">
                     @if (Auth::check())
                         <li class="dropdown-nav">
-                            <i class="fa fa-user left" aria-hidden="true"></i><span class="hidden-sm-down">My
-                                Account</span><i class="fa fa-angle-down right" aria-hidden="true"></i>
+                            <i class="fa fa-user left" aria-hidden="true"></i><span
+                                class="hidden-sm-down">{{ Auth::user()->name }}</span><i
+                                class="fa fa-angle-down right" aria-hidden="true"></i>
                             <!--Dropdown-->
                             <div class="dropdown-menu">
                                 <ul>
+                                    <li><i>{{ Auth::user()->email }}</i></li>
+                                    <hr>
                                     @can('admin-access')
                                         <li><a href="{{ route('dashboard') }}">Quản trị trang web</a></li>
                                     @endcan
-                                    <li><a href="#">Thông tin tài khoản</a></li>
-                                    <li><a href="#">Đơn hàng của tôi</a></li>
+                                    <li><a href="{{ route('invoice.client') }}">Đơn hàng của tôi</a></li>
+                                    <li><a href="#">Đổi mật khẩu</a></li>
                                     <li><a href="{{ route('logout.client') }}" style="color: red"
                                             onclick="return confirm('Bạn có chắc chắn muốn đăng xuất ?')">Đăng xuất</a>
                                     </li>
@@ -83,9 +86,25 @@
                                 </div>
 
                                 <div class="cart-title">
-                                    <span class="cart-count">2</span>
-                                    /
-                                    <span class="cart-price strong">$698.00</span>
+
+                                    @if (Session::has('cart'))
+                                        @php
+                                            $cartArr = session()->get('cart');
+                                            $totalPriceCart = 0;
+                                            $totalQuantity = 0;
+                                            foreach ($cartArr as $cart) {
+                                                $totalPriceCart += ($cart['price'] - ($cart['price'] * $cart['discount']) / 100) * $cart['quantity'];
+                                                $totalQuantity += 1;
+                                            }
+                                        @endphp
+                                        <span class="cart-count">{{ $totalQuantity }}</span>
+                                        /
+                                        <span class="cart-price strong">{{ number_format($totalPriceCart) }} Đ</span>
+                                    @else
+                                        <span class="cart-count">0</span>
+                                        /
+                                        <span class="cart-price strong">0 Đ</span>
+                                    @endif
                                 </div>
                             </a></li>
                     </ul>

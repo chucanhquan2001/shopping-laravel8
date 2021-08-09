@@ -95,13 +95,7 @@
                         </div>
                         <!-- End Product Grid -->
 
-                        <div class="pagination-wraper">
-                            <div class="pagination">
-                                @if (request()->product_show && request()->product_show != 'all')
-                                    {{ $products->appends(request()->all())->links() }}
-                                @endif
-                            </div>
-                        </div>
+
                     </div>
                     <!-- End Product Content -->
 
@@ -117,8 +111,8 @@
 @endsection
 @section('js')
     <script>
-        $('#product-show').change(function() {
-            $('form.product-show').submit();
+        $('#short-by').change(function() {
+            $('form.product-sort-by').submit();
         });
     </script>
 @endsection

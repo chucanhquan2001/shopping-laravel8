@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Product extends Model
 {
-    protected $fillable = ['name', 'slug', 'price', 'discount', 'quantity', 'image', 'content', 'description', 'status', 'view', 'category_id', 'user_id'];
+    protected $fillable = ['name', 'slug', 'price', 'discount', 'quantity', 'image', 'content', 'description', 'status', 'view', 'total_product_sold', 'category_id', 'user_id'];
     use HasFactory, softDeletes;
 
     public function scopeSearch($query)
@@ -37,5 +37,10 @@ class Product extends Model
     public function getUser()
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function getReviews()
+    {
+        return $this->hasMany(Review::class, 'product_id', 'id');
     }
 }

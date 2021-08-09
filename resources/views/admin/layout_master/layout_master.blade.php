@@ -356,6 +356,7 @@
                                 <h5 class="text-dark font-weight-bold mt-2 mb-2 mr-5">
                                     @yield('title')
                                 </h5>
+                                @yield('title_li')
                                 <!--end::Page Title-->
                                 <!--begin::Actions-->
 
@@ -559,7 +560,9 @@
     <!--end::Page Vendors-->
     <!--begin::Page Scripts(used by this page)-->
     <script src="{{ asset('admin_assets/js/pages/widgets.js') }}"></script>
+    {{-- <script src="{{ asset('admin_assets/js/pages/crud/ktdatatable/base/html-table.js') }}"></script> --}}
     <!--end::Page Scripts-->
+    <script src="{{ asset('admin_assets/js/pages/crud/ktdatatable/base/html-table.js') }}"></script>
     @yield('js')
     @yield('delete')
 </body>

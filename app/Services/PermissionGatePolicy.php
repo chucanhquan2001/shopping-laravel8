@@ -15,6 +15,9 @@ use App\Policies\PostPolicy;
 use App\Policies\UserPolicy;
 use App\Policies\RolePolicy;
 use App\Policies\CheckAdminPolicy;
+use App\Policies\ReviewPolicy;
+use App\Policies\ReplyPolicy;
+use App\Policies\InvoicePolicy;
 
 class PermissionGatePolicy
 {
@@ -31,10 +34,18 @@ class PermissionGatePolicy
         $this->setUser();
         $this->setRole();
         $this->setAccessAdmin();
+        $this->setReview();
+        $this->setReply();
+        $this->setInvoice();
     }
     public function setAccessAdmin()
     {
         Gate::define('admin-access', [CheckAdminPolicy::class, 'checkRoleAdmin']);
+    }
+    public function setInvoice()
+    {
+        Gate::define('invoice-list', [InvoicePolicy::class, 'viewAny']);
+        Gate::define('invoice-edit', [InvoicePolicy::class, 'update']);
     }
     public function setCategory()
     {
@@ -105,5 +116,18 @@ class PermissionGatePolicy
         Gate::define('role-add', [RolePolicy::class, 'create']);
         Gate::define('role-edit', [RolePolicy::class, 'update']);
         Gate::define('role-delete', [RolePolicy::class, 'delete']);
+    }
+    public function setReview()
+    {
+        Gate::define('review-list', [ReviewPolicy::class, 'viewAny']);
+        Gate::define('review-reply', [ReviewPolicy::class, 'create']);
+        Gate::define('review-edit', [ReviewPolicy::class, 'update']);
+        Gate::define('review-delete', [ReviewPolicy::class, 'delete']);
+    }
+    public function setReply()
+    {
+        Gate::define('reply-list', [ReplyPolicy::class, 'viewAny']);
+        Gate::define('reply-edit', [ReplyPolicy::class, 'update']);
+        Gate::define('reply-delete', [ReplyPolicy::class, 'delete']);
     }
 }
