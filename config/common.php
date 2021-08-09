@@ -5,6 +5,9 @@ return [
         'pulish' => 1,
         'unpulish' => 0
     ],
+    'create_account' => [
+        'agree' => 1,
+    ],
     'status_sliders' => [
         'banner' => 1,
         'banner_children' => 0
@@ -21,6 +24,23 @@ return [
     ],
     'role' => [
         'guest' => 2
+    ],
+    'invoice' => [
+        'status' => [
+            'cho_xac_nhan' => 1,
+            'cho_lay_hang' => 2,
+            'dang_giao' => 3,
+            'da_giao' => 4,
+            'da_huy' => 5,
+        ],
+    ],
+    'sortBy' => [
+        'mac_dinh' => 0,
+        'pho_bien' => 1,
+        'ban_chay_nhat' => 2,
+        'moi_nhat' => 3,
+        'thap_cao' => 4,
+        'cao_thap' => 5
     ],
     'permissions' => [
         'admin' => [
@@ -91,6 +111,21 @@ return [
             'role-add' => 'create_role',
             'role-edit' => 'edit_role',
             'role-delete' => 'delete_role'
+        ],
+        'reviews' => [
+            'review-list' => 'list_review',
+            'review-reply' => 'reply_review',
+            'review-edit' => 'edit_review',
+            'review-delete' => 'delete_review'
+        ],
+        'replies' => [
+            'reply-list' => 'list_reply',
+            'reply-edit' => 'edit_reply',
+            'reply-delete' => 'delete_reply'
+        ],
+        'invoices' => [
+            'invoice-list' => 'list_invoice',
+            'invoice-edit' => 'edit_invoice',
         ],
     ],
 

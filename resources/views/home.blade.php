@@ -260,15 +260,18 @@
 
                                     <!--Customer Carousel-->
                                     <div class="testimonials-carousel owl-carousel owl-theme nf-carousel-theme1">
-                                        @for ($i = 0; $i < 4; $i++)
+                                        @foreach ($reviews as $itemReview)
+
                                             <div class="product-item">
-                                                <p class="large quotes">Sản phẩm ở đây rất tốt, tôi thật sự bị mê hoặc,
-                                                    tôi
-                                                    sẽ
-                                                    ủng hộ của hàng lâu dài !</p>
-                                                <h6 class="quotes-people">- Chúc Anh Quân</h6>
+                                                <div class="star-rating" itemprop="reviewRating" itemscope=""
+                                                    itemtype="http://schema.org/Rating" title="Rated 4 out of 5">
+                                                    <span
+                                                        style="width: {{ round($itemReview->rating_star) * 2 }}0%"></span>
+                                                </div>
+                                                <p class="large quotes">{{ $itemReview->comment }}</p>
+                                                <h6 class="quotes-people">- {{ $itemReview->name }}</h6>
                                             </div>
-                                        @endfor
+                                        @endforeach
                                     </div>
                                     <!--End Customer Carousel-->
                                 </div>

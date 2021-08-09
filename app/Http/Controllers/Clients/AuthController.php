@@ -9,6 +9,7 @@ use App\Http\Requests\Login\LoginAdminRequest;
 use App\Http\Requests\Auths\RegisterRequest;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
+use App\Models\Invoice;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -67,5 +68,36 @@ class AuthController extends Controller
     {
         Auth::logout();
         return redirect()->route('login.client')->with('error', 'Đăng xuất thành công !');
+    }
+
+    public function invoice(Request $request)
+    {
+        // in danh mục ra menu
+        $categories = Category::where([
+            ['status', '=', config('common.status.pulish')],
+            ['parent_id', '=', 0]
+        ])->take(4)->get();
+        if ($request->status) {
+            if ($request->status == 'all') {
+                $invoices = Invoice::where('user_id', auth()->id())->orderBy('status', 'ASC')->get();
+            } else {
+                $invoices = Invoice::where([
+                    ['user_id', auth()->id()],
+                    ['status', $request->status]
+                ])->orderBy('status', 'ASC')->get();
+            }
+        } else {
+            $invoices = Invoice::where('user_id', auth()->id())->orderBy('status', 'ASC')->get();
+        }
+        return view('frontend.pages.invoice', compact('categories', 'invoices'));
+    }
+
+    public function cancelOrder($invoice_id)
+    {
+        $invoice = Invoice::find($invoice_id);
+        $invoice->update([
+            'status' => config('common.invoice.status.da_huy')
+        ]);
+        return redirect()->back();
     }
 }

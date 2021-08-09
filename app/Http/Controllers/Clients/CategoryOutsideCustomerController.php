@@ -36,11 +36,7 @@ class CategoryOutsideCustomerController extends Controller
                     $productArr[] = $product;
                 }
             }
-            if (request()->product_show && request()->product_show != 'all') {
-                $products = $this->paginate($productArr, request()->product_show);
-            } else {
-                $products = $productArr;
-            }
+            $products = $productArr;
             return view('frontend.pages.category_parent', compact('categories', 'category', 'products'));
         } else {
             abort(404);
@@ -59,22 +55,47 @@ class CategoryOutsideCustomerController extends Controller
         $category = Category::where('slug', $slug)->first();
 
         if ($category) {
-            if (request()->product_show && request()->product_show != 'all') {
-                $products = Product::where('category_id', $category->id)->paginate(request()->product_show);
+            if (request()->short_by) {
+                if (request()->short_by == config('common.sortBy.mac_dinh')) {
+                    $products = Product::where('category_id', $category->id)
+                        ->join('product_variants', 'product_variants.product_id', '=', 'products.id')
+                        ->where('product_variants.status', config('common.product_variants.status.main'))
+                        ->get();
+                } elseif (request()->short_by == config('common.sortBy.pho_bien')) {
+                    $products = Product::where('category_id', $category->id)
+                        ->join('product_variants', 'product_variants.product_id', '=', 'products.id')
+                        ->where('product_variants.status', config('common.product_variants.status.main'))
+                        ->orderBy('products.view', 'DESC')->get();
+                } elseif (request()->short_by == config('common.sortBy.ban_chay_nhat')) {
+                    $products = Product::where('category_id', $category->id)
+                        ->join('product_variants', 'product_variants.product_id', '=', 'products.id')
+                        ->where('product_variants.status', config('common.product_variants.status.main'))
+                        ->orderBy('products.total_product_sold', 'DESC')->get();
+                } elseif (request()->short_by == config('common.sortBy.moi_nhat')) {
+                    $products = Product::where('category_id', $category->id)
+                        ->join('product_variants', 'product_variants.product_id', '=', 'products.id')
+                        ->where('product_variants.status', config('common.product_variants.status.main'))
+                        ->orderBy('product_variants.created_at', 'DESC')->get();
+                } elseif (request()->short_by == config('common.sortBy.thap_cao')) {
+                    $products = Product::where('category_id', $category->id)
+                        ->join('product_variants', 'product_variants.product_id', '=', 'products.id')
+                        ->where('product_variants.status', config('common.product_variants.status.main'))
+                        ->orderBy('product_variants.price', 'ASC')->get();
+                } elseif (request()->short_by == config('common.sortBy.cao_thap')) {
+                    $products = Product::where('category_id', $category->id)
+                        ->join('product_variants', 'product_variants.product_id', '=', 'products.id')
+                        ->where('product_variants.status', config('common.product_variants.status.main'))
+                        ->orderBy('product_variants.price', 'DESC')->get();
+                }
             } else {
-                $products = Product::where('category_id', $category->id)->get();
+                $products = Product::where('category_id', $category->id)
+                    ->join('product_variants', 'product_variants.product_id', '=', 'products.id')
+                    ->where('product_variants.status', config('common.product_variants.status.main'))
+                    ->get();
             }
             return view('frontend.pages.category_children', compact('categories', 'category', 'products'));
         } else {
             abort(404);
         }
-    }
-
-    // phân trang cho danh mục cha
-    public function paginate($items, $perPage, $page = null)
-    {
-        $page = $page ?: (Paginator::resolveCurrentPage() ?: 1);
-        $items = $items instanceof Collection ? $items : Collection::make($items);
-        return new LengthAwarePaginator($items->forPage($page, $perPage), $items->count(), $perPage, $page, ['path' => request()->url]);
     }
 }

@@ -1921,8 +1921,9 @@ form label.error {
         font-size: 13px;
         font-weight: 400;
         position: absolute;
-        left: 0;
-        width: 180px;
+        width: 236px;
+    
+    left: -69px;
         background: #fff;
         border: 1px solid #eee;
         display: none;
@@ -6001,3 +6002,4 @@ ul#shipping_method {
   -ms-transform: rotate(45deg);
   transform: rotate(45deg);
 }
+

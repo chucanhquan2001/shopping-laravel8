@@ -8,12 +8,19 @@ use App\Models\Product;
 use App\Models\Category;
 use App\Models\ProductVariant;
 use App\Models\Variant;
+use App\Models\Review;
+use App\Models\Reply;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 
 
 class ProductDetailOutsideCustomerController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('can:review-reply', ['only' => ['storeReply']]);
+    }
     public function index($slug)
     {
         // in danh mục ra menu
@@ -21,6 +28,8 @@ class ProductDetailOutsideCustomerController extends Controller
             ['status', '=', config('common.status.pulish')],
             ['parent_id', '=', 0]
         ])->take(4)->get();
+
+
 
         // lấy ra sản phẩm liên quan
         $category_id = Product::where('slug', $slug)->first()->getCate->id;
@@ -74,9 +83,15 @@ class ProductDetailOutsideCustomerController extends Controller
             )
             ->where('product_variants.status', config('common.product_variants.status.main'))
             ->first();
-        // dd($products);
+
+        // lấy ra bình luận của sản phẩm
+        $reviews = Review::where([
+            ['status', '=', config('common.status.pulish')],
+            ['product_id', '=', $product_main->id]
+        ])->orderBy('created_at', 'DESC')->get();
+
         if ($products) {
-            return view('frontend.pages.product_detail', compact('categories', 'product_main', 'products', 'product_related'));
+            return view('frontend.pages.product_detail', compact('categories', 'product_main', 'products', 'product_related', 'reviews'));
         } else {
             abort(404);
         }
@@ -94,5 +109,29 @@ class ProductDetailOutsideCustomerController extends Controller
             'quantity' => $productVariant->quantity,
             'code' => 200
         ]);
+    }
+
+    public function storeReview(Request $request)
+    {
+        Review::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'rating_star' => $request->rating_star,
+            'comment' => $request->comment,
+            'status' => config('common.status.pulish'),
+            'product_id' => $request->product_id,
+        ]);
+        return redirect()->back()->with('success', 'Thêm bình luận thành công !');
+    }
+
+    public function storeReply(Request $request)
+    {
+        Reply::create([
+            'comment' => $request->comment,
+            'status' => config('common.status.pulish'),
+            'review_id' => $request->review_id,
+            'user_id' => Auth::id()
+        ]);
+        return redirect()->back()->with('success', 'Thêm bình luận thành công !');
     }
 }

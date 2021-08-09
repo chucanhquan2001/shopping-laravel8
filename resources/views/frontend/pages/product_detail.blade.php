@@ -2,6 +2,9 @@
 @section('title_url')
     <title> {{ $product_main->name }} </title>
 @endsection
+@section('css')
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/rateYo/2.3.2/jquery.rateyo.min.css">
+@endsection
 @section('main')
     <div class="page-content-wraper">
         <!-- Bread Crumb -->
@@ -70,9 +73,10 @@
                             <div class="product-rating">
                                 <div class="star-rating" itemprop="reviewRating" itemscope=""
                                     itemtype="http://schema.org/Rating" title="Rated 4 out of 5">
-                                    <span style="width: 60%"></span>
+                                    <span style="width: {{ round($reviews->avg('rating_star')) * 2 }}0%"></span>
                                 </div>
-                                <a href="#" class="product-rating-count"><span class="count">3</span> Reviews</a>
+                                <a href="#" class="product-rating-count"><span
+                                        class="count">{{ $product_main->getReviews->count() }}</span> Đánh giá</a>
                             </div>
                             <div class="product-price">
                                 <del class="product-price-old">{{ number_format($product_main->price) }}
@@ -85,7 +89,7 @@
                                 {!! $product_main->description !!}
                             </p>
                             <br>
-                            <form id="form-add-cart" action="{{ route('add-cart') }}" method="post">
+                            <form id="form-add-cart" action="{{ route('add.cart') }}" method="post">
                                 @csrf
                                 <div class="row product-filters" style="margin-left: 5px">
                                     <select name="product_variant_id" id="select-color"
@@ -164,7 +168,8 @@
                             Thông số</a>
                     </li>
                     <li class="nav-item">
-                        <a class="" href="#tab_reviews" role="tab" data-toggle="tab">Đánh giá (<span>3</span>)</a>
+                        <a class="" href="#tab_reviews" role="tab" data-toggle="tab">Đánh giá
+                            (<span>{{ $product_main->getReviews->count() }}</span>)</a>
                     </li>
 
                 </ul>
@@ -244,34 +249,33 @@
                         <div id="tab_reviews-coll" class=" product-collapse collapse container">
                             <div class="row">
                                 <div class="review-form-wrapper col-md-6">
-                                    <h6 class="review-title">Add a Review </h6>
-                                    <form class="comment-form">
+                                    <h6 class="review-title">Thêm đánh giá của bạn </h6>
+                                    @if (Session::has('success'))
+                                        <input type="text" class="input_alert" value="{{ Session::get('success') }}"
+                                            hidden>
+                                    @endif
+                                    <form action="{{ route('add.review') }}" class="comment-form" method="post">
+                                        @csrf
                                         <div class="form-field-wrapper">
-                                            <label>Your Rating</label>
-                                            <p class="stars">
-                                                <span>
-                                                    <a class="star-1" href="#">1</a>
-                                                    <a class="star-2" href="#">2</a>
-                                                    <a class="star-3" href="#">3</a>
-                                                    <a class="star-4 active" href="#">4</a>
-                                                    <a class="star-5" href="#">5</a>
-                                                </span>
-                                            </p>
+                                            <label>Xếp hạng</label>
+                                            <input type="text" name="rating_star" id="rating_star" placeholder hidden>
+                                            <div id="rateYo"></div>
+                                            <input type="text" name="product_id" value="{{ $product_main->id }}" hidden>
                                         </div>
                                         <div class="form-field-wrapper">
-                                            <label>Your Review <span class="required">*</span></label>
+                                            <label>Đánh giá chi tiết<span class="required">*</span></label>
                                             <textarea id="comment" class="form-full-width" name="comment" cols="45" rows="8"
                                                 aria-required="true" required=""></textarea>
                                         </div>
                                         <div class="form-field-wrapper">
-                                            <label>Name <span class="required">*</span></label>
-                                            <input id="author" class="input-md form-full-width" name="author" value=""
-                                                size="30" aria-required="true" required="" type="text">
+                                            <label>Họ tên <span class="required">*</span></label>
+                                            <input id="author" class="input-md form-full-width" name="name" size="30"
+                                                aria-required="true" required="" type="text">
                                         </div>
                                         <div class="form-field-wrapper">
                                             <label>Email <span class="required">*</span></label>
-                                            <input id="email" class="input-md form-full-width" name="email" value=""
-                                                size="30" aria-required="true" required="" type="email">
+                                            <input id="email" class="input-md form-full-width" name="email" size="30"
+                                                aria-required="true" required="" type="email">
                                         </div>
                                         <div class="form-field-wrapper">
                                             <input name="submit" id="submit" class="submit btn btn-md btn-color"
@@ -280,29 +284,88 @@
                                     </form>
                                 </div>
                                 <div class="comments col-md-6">
-                                    <h6 class="review-title">Customer Reviews</h6>
-                                    <!--<p class="review-blank">There are no reviews yet.</p>-->
-                                    <ul class="commentlist">
-                                        <li id="comment-101" class="comment-101">
-                                            <img src="{{ asset('frontend_assets/img/avatar.jpg') }}" class="avatar"
-                                                alt="author" />
-                                            <div class="comment-text">
-                                                <div class="star-rating" itemprop="reviewRating" itemscope=""
-                                                    itemtype="http://schema.org/Rating" title="Rated 4 out of 5">
-                                                    <span style="width: 100%"></span>
-                                                </div>
-                                                <p class="meta">
-                                                    <strong itemprop="author">James Koster</strong>
-                                                    &nbsp;&mdash;&nbsp;
-                                                    <time itemprop="datePublished" datetime="">April 25, 2016</time>
-                                                </p>
-                                                <div class="description" itemprop="description">
-                                                    <p>Wow Amazing!</p>
-                                                </div>
-                                            </div>
-                                        </li>
+                                    <h6 class="review-title">Đánh giá của khách hàng</h6>
+                                    @if ($product_main->getReviews->count() == 0)
+                                        <p class="review-blank">Chưa có đánh giá nào cho sản phẩm.</p>
+                                    @else
+                                        <ul class="commentlist">
+                                            @foreach ($reviews as $itemReview)
+                                                <li id="comment-101" class="comment-101">
+                                                    <img src="{{ asset('frontend_assets/img/avatar.jpg') }}"
+                                                        class="avatar" alt="author" />
+                                                    <div class="comment-text">
+                                                        <div class="star-rating" itemprop="reviewRating" itemscope=""
+                                                            itemtype="http://schema.org/Rating" title="Rated 4 out of 5">
+                                                            <span
+                                                                style="width: {{ round($itemReview->rating_star) * 2 }}0%"></span>
+                                                        </div>
+                                                        <p class="meta">
+                                                            <strong itemprop="author">{{ $itemReview->name }}</strong>
+                                                            &nbsp;&mdash;&nbsp;
+                                                            <time itemprop="datePublished"
+                                                                datetime="">{{ $itemReview->created_at }}</time>
+                                                        </p>
+                                                        <div class="description" itemprop="description">
+                                                            <p>{{ $itemReview->comment }}</p>
+                                                        </div>
+                                                        @can('review-reply')
+                                                            <a style="font-size: 14px; color: gray; float: right"
+                                                                class="show-form"
+                                                                data-review="{{ $itemReview->id }}">Reply</a>
+                                                        @endcan
+                                                    </div>
 
-                                    </ul>
+                                                </li>
+
+                                                @foreach ($itemReview->getReplies()->where('status', config('common.status.pulish'))->get()
+        as $itemReply)
+                                                    <li id="comment-102" class="comment-102" style="margin-left: 44px;">
+                                                        <img src="{{ asset('frontend_assets/img/avatar.jpg') }}"
+                                                            class="avatar" alt="author" />
+                                                        <div class="comment-text">
+                                                            <p class="meta">
+                                                                <strong itemprop="author">ADMIN</strong>
+                                                                &nbsp;&mdash;&nbsp;
+                                                                <time itemprop="datePublished"
+                                                                    datetime="">{{ $itemReply->created_at }}</time>
+                                                            </p>
+                                                            <div class="description" itemprop="description">
+                                                                <p>{{ $itemReply->comment }}</p>
+                                                            </div>
+                                                        </div>
+                                                    </li>
+                                                @endforeach
+                                                @can('review-reply')
+                                                    <form action="{{ route('add.reply') }}" method="POST"
+                                                        class="form-reply-{{ $itemReview->id }}"
+                                                        style="display: none;margin-top: -15px;margin-bottom: 33px">
+                                                        @csrf
+                                                        <input type="text" hidden name="review_id"
+                                                            value="{{ $itemReview->id }}">
+                                                        <div class="row" style="margin-bottom: 10px">
+                                                            <div class="col-md-1">
+
+                                                            </div>
+                                                            <div class="col-md-2">
+                                                                <img src="{{ asset('frontend_assets/img/avatar.jpg') }}"
+                                                                    class="avatar" alt="author" />
+                                                            </div>
+                                                            <div class="col-md-7">
+                                                                <input id="author" class="input-md form-full-width"
+                                                                    name="comment" size="35" aria-required="true" required=""
+                                                                    type="text" style="margin-top: 5px;width: 100%;"
+                                                                    placeholder="Trả lời khách hàng ...">
+                                                            </div>
+                                                            <div class="col-md-2">
+                                                                <input type="submit" style="margin-top: 23px;height: 25px;"
+                                                                    value="Gửi">
+                                                            </div>
+                                                        </div>
+                                                    </form>
+                                                @endcan
+                                            @endforeach
+                                        </ul>
+                                    @endif
                                 </div>
                             </div>
                         </div>
@@ -366,7 +429,32 @@
 
 @endsection
 @section('js')
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/rateYo/2.3.2/jquery.rateyo.min.js"></script>
     <script>
+        // rating 
+        $("#rateYo").rateYo({
+            rating: 0,
+            starWidth: "20px",
+            ratedFill: "yellow",
+        }).on("rateyo.set", function(e, data) {
+            $("#rating_star").val(data.rating);
+        });
+
+        // hiện thị thông báo thêm đánh giá thành công !
+        if ($('.input_alert').val()) {
+            alert($('.input_alert').val());
+        }
+
+        // hiển thị form trả lời bình luận
+        $(".show-form").click(function() {
+            let idReview = $(this).data("review");
+
+            $(".form-reply-" + idReview).slideToggle();
+
+        });
+
+        // add giỏ hàng
         $("#form-add-cart").submit(function(event) {
             /* stop form from submitting normally */
             event.preventDefault();
@@ -384,26 +472,65 @@
                     quantity: $(".quantity").val(),
                 },
                 success: function(data) {
-                    alert(data.product_id);
+                    if (data.code === 200) {
+
+                        // in ra html cart modal
+                        let datas = data.carts;
+                        let htmlCartModal = ``;
+
+                        // tính tổng tiền
+                        let totalPrices = parseFloat(data.totalPrice);
+
+                        Object.values(datas).forEach(val => {
+                            let priceUnit = val['price'] - (val['price'] * val['discount'] /
+                                100);
+                            htmlCartModal += `
+                                <li>
+                                <!--Item Image-->
+                                <a href="#" class="product-image">
+                                    <img src="${val['image']}" alt="" /></a>
+
+                                <!--Item Content-->
+                                <div class="product-content">
+                                    <!-- Item Linkcollateral -->
+                                    <a class="product-link" href="#">${val['name']}</a>
+
+                                    <!-- Item Cart Totle -->
+                                    <div class="cart-collateral">
+                                        <span
+                                            class="qty-cart">${val['quantity']}</span>&nbsp;<span>&#215;</span>&nbsp;<span
+                                            class="product-price-amount"><a>${priceUnit}
+                                                Đ</a>
+                                    </div>
+
+                                    <!-- Item Remove Icon -->
+                                    <a class="product-remove" href="javascript:void(0)"><i class="fa fa-times-circle"
+                                            aria-hidden="true"></i></a>
+                                </div>
+                            </li>
+                            `;
+                        });
+                        $(".change-cart").html(htmlCartModal);
+                        $(".change-cart-not-session").html(htmlCartModal);
+
+
+                        // in ra tổng tiền ở modal cart
+                        let moneyFormatPrice = new Intl.NumberFormat('ja-JP').format(totalPrices);
+                        $(".change-price").html(moneyFormatPrice + " Đ");
+                        $(".strong").html(moneyFormatPrice + " Đ");
+                        $(".cart-count").html(data.totalQuantity);
+                        swal("Thêm vào giỏ hàng thành công !", {
+                            icon: "warning",
+                        });
+                    }
                 },
                 dataType: 'json'
             });
         });
-        // if (confirm('Chắc chắn không')) {
-        //     $('.click-image-SPAPBT-23').click();
-        // }
-        // $('.click-image').click(function() {
-        //     let image = this.getAttribute('src');
-        //     let id = this.getAttribute('product-id');
-        //     document.getElementById('show-img-' + id).src = image;
-        //     let list = document.getElementsByClassName('click-image');
-        //     for (let i = 0; i < list.length; i++) {
-        //         list[i].style.border = "none";
-        //     }
-        //     this.style.border = "1px solid black";
-        //     this.style.padding = "5px";
-        // })
 
+
+
+        // đổi anh và giá khi thay đổi thuộc tính
         $("[name='product_variant_id']").change(function() {
             let idProductVariant = $(this).val();
             $.ajax({

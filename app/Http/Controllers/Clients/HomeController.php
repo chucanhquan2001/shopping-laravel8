@@ -8,6 +8,7 @@ use App\Models\Slider;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductVariant;
+use App\Models\Review;
 
 class HomeController extends Controller
 {
@@ -35,14 +36,16 @@ class HomeController extends Controller
         // lấy 8 sản phẩm xu hướng mới theo view
         $product_trending = Product::orderBy('view', 'DESC')->take(8)->get();
 
-        return view('home', compact('banners', 'sliders1', 'sliders2', 'categories', 'product_latest', 'product_pulish', 'product_trending'));
-    }
+        // lấy 8 sản phẩm bán được nhiều nhất
+        $product_seller = Product::orderBy('total_product_sold', 'DESC')->take(8)->get();
 
-    public function addCart(Request $request)
-    {
-        // return response()->json([
-        //     'product_id' => $request->product_variant_id,
-        //     'code' => 200
-        // ]);
+        // lấy những bình luận nổi bật hiển thị
+        $reviews = Review::where([
+            ['status', config('common.status.pulish')],
+            ['rating_star', 5]
+        ])->take(3)->get();
+
+
+        return view('home', compact('banners', 'sliders1', 'sliders2', 'categories', 'product_latest', 'product_pulish', 'product_trending', 'reviews', 'product_seller'));
     }
 }

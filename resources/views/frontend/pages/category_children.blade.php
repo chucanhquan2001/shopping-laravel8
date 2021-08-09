@@ -46,8 +46,7 @@
                                     <div class="product-item">
                                         <div class="product-item-inner">
                                             <div class="product-img-wrap">
-                                                <img src="{{ $product->getProductVariant()->where('status', 0)->first()->image }}"
-                                                    alt="">
+                                                <img src="{{ $product->image }}" alt="">
                                             </div>
                                             <div class="product-button">
                                                 <a href="#" class="js_tooltip" data-mode="top" data-tip="Compare"><i
@@ -75,16 +74,9 @@
                                             </div>
 
                                             <h5 class="item-price">
-                                                <del>{{ number_format(
-    $product->getProductVariant()->where('status', 0)->first()->price,
-) }}
+                                                <del>{{ number_format($product->price) }}
                                                     Đ</del>
-                                                {{ number_format(
-    $product->getProductVariant()->where('status', 0)->first()->price -
-        ($product->getProductVariant()->where('status', 0)->first()->price *
-            $product->getProductVariant()->where('status', 0)->first()->discount) /
-            100,
-) }}
+                                                {{ number_format($product->price - ($product->price * $product->discount) / 100) }}
                                                 Đ
                                             </h5>
                                         </div>
@@ -94,14 +86,6 @@
                             @endforeach
                         </div>
                         <!-- End Product Grid -->
-
-                        <div class="pagination-wraper">
-                            <div class="pagination">
-                                @if (request()->product_show && request()->product_show != 'all')
-                                    {{ $products->appends(request()->all())->links() }}
-                                @endif
-                            </div>
-                        </div>
 
                     </div>
                     <!-- End Product Content -->
@@ -118,8 +102,8 @@
 @endsection
 @section('js')
     <script>
-        $('#product-show').change(function() {
-            $('form.product-show').submit();
+        $('#short-by').change(function() {
+            $('form.product-sort-by').submit();
         });
     </script>
 @endsection
