@@ -8,6 +8,7 @@ use App\Http\Requests\Login\LoginAdminRequest;
 
 class AdminController extends Controller
 {
+    // thửu
     public function login()
     {
         return view('admin.login');
